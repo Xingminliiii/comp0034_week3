@@ -56,7 +56,7 @@ app.layout = dbc.Container(fluid=True, children=[
 def render_stats_chart(area_select):
     # add the code here
     fig_rc = rc.create_chart(area_select)
-        # Get the statistics
+    # Get the statistics
     data.process_data_for_area(area_select)
     comp_to_eng = f'{data.compare_to_eng:,.0f}'
     comp_to_prev_year = f'{data.change_area:,.0f}'
