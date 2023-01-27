@@ -1,6 +1,7 @@
 from dash import html, dcc, Dash, dash_table
 import dash_bootstrap_components as dbc
-from paralympics_app import create_charts as cc
+import create_charts as cc
+from dash import html, dcc, Dash, Input, Output
 
 fig_line_sports = cc.line_chart_sports()
 fig_sb_gender_winter = cc.stacked_bar_gender("Winter")
@@ -9,6 +10,7 @@ fig_scatter_mapbox = cc.scatter_mapbox_para_locations("OSM")
 df_medals_data = cc.top_ten_gold_data()
 df_medals = cc.get_medals_table_data("London", 2012)
 fig_cp_map_medals = cc.choropleth_mapbox_medals(df_medals)
+ 
 
 app = Dash(
     __name__,
@@ -24,6 +26,16 @@ app.layout = dbc.Container(
         html.H2(
             "Has the number of athletes, nations, events and sports changed over time?"
         ),
+        dcc.Dropdown(id='demo-dropdown',
+                    options=[
+                    {'label': 'EVENTS', 'value': 'EVENTS'},
+                    {'label': 'SPORTS', 'value': 'SPORTS'},
+                    {'label': 'COUNTRIES', 'value': 'COUNTRIES'},
+                    {'label': 'PARTICIPANTS', 'value': 'PARTICIPANTS'},
+                    ],
+                    ),
+ 
+
         dcc.Graph(id="line-sports", figure=fig_line_sports),
         html.H2(
             "Has the ratio of male and female athletes changed over time?"
@@ -47,6 +59,14 @@ app.layout = dbc.Container(
     ],
     fluid=True,
 )
+
+@app.callback(
+    Output("line-sports", 'figure'),
+    Input('demo-dropdown', 'value')
+)
+def new_line_chart(chart_type):
+    return cc.line_chart_over_time(chart_type)
+
 
 if __name__ == "__main__":
     app.run_server(debug=True, port=8555)
